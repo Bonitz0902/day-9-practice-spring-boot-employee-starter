@@ -122,20 +122,20 @@ class CompanyApiTest {
     @Test
     void should_find_company_by_id() throws Exception {
         Company company = getCompany1();
-        companyJpaRepository.save(company);
+        Company saveCompany = companyJpaRepository.save(company);
         Employee employee = getEmployee(company);
         Employee saveEmployee = employeeJpaRepository.save(employee);
 
         mockMvc.perform(get("/companies/{id}", 1))
                 .andExpect(MockMvcResultMatchers.status().is(200))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(company.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(saveCompany.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(saveCompany.getName()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.employees.length()").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].id").value(1L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].name").value(employee.getName()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].age").value(employee.getAge()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].gender").value(employee.getGender()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].salary").value(employee.getSalary()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].id").value(saveEmployee.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].name").value(saveEmployee.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].age").value(saveEmployee.getAge()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].gender").value(saveEmployee.getGender()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].salary").value(saveEmployee.getSalary()));
     }
 
     @Test
