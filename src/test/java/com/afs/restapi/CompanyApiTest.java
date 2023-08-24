@@ -102,19 +102,20 @@ class CompanyApiTest {
         Company company1 = getCompany1();
         Company company2 = getCompany2();
         Company company3 = getCompany3();
-        companyJpaRepository.save(company1);
-        companyJpaRepository.save(company2);
-        companyJpaRepository.save(company3);
+
+        Company saveCompany1 = companyJpaRepository.save(company1);
+        Company saveCompany2 = companyJpaRepository.save(company2);
+        Company saveCompany3 = companyJpaRepository.save(company3);
 
         mockMvc.perform(get("/companies")
                         .param("pageNumber", "1")
                         .param("pageSize", "2"))
                 .andExpect(MockMvcResultMatchers.status().is(200))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(2))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(1L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value(company1.getName()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(2L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").value(company2.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(saveCompany1.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value(saveCompany1.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(saveCompany2.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").value(saveCompany2.getName()))
         ;
     }
 
