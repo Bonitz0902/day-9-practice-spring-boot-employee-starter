@@ -25,8 +25,7 @@ public class EmployeeService {
     }
 
     public Employee findById(Long id) {
-        return getEmployeeRepository().findById(id)
-                .orElseThrow(EmployeeNotFoundException::new);
+        return getEmployeeRepository().findById(id).orElseThrow(EmployeeNotFoundException::new);
     }
 
     public void update(Long id, Employee employee) {
