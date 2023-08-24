@@ -4,8 +4,6 @@ import com.afs.restapi.entity.Company;
 import com.afs.restapi.entity.Employee;
 import com.afs.restapi.repository.CompanyJpaRepository;
 import com.afs.restapi.repository.EmployeeJpaRepository;
-import com.afs.restapi.repository.InMemoryCompanyRepository;
-import com.afs.restapi.repository.InMemoryEmployeeRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +17,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -65,17 +62,18 @@ class CompanyApiTest {
     @Test
     void should_delete_company_name() throws Exception {
         Company company = new Company(1L, "abc");
-        companyJpaRepository.save(company);
+        Company saveCompany = companyJpaRepository.save(company);
 
-        mockMvc.perform(delete("/companies/{id}", 1))
+        mockMvc.perform(delete("/companies/{id}", saveCompany.getId()))
                 .andExpect(MockMvcResultMatchers.status().is(204));
 
-        assertTrue(companyJpaRepository.findById(1L).isEmpty());
+        assertTrue(companyJpaRepository.findById(saveCompany.getId()).isEmpty());
     }
 
     @Test
     void should_create_employee() throws Exception {
         Company company = getCompany1();
+        Company saveCompany = companyJpaRepository.save(company);
 
         ObjectMapper objectMapper = new ObjectMapper();
         String companyRequest = objectMapper.writeValueAsString(company);
@@ -83,8 +81,8 @@ class CompanyApiTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(companyRequest))
                 .andExpect(MockMvcResultMatchers.status().is(201))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(company.getName()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(saveCompany.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(saveCompany.getName()));
     }
 
     @Test
