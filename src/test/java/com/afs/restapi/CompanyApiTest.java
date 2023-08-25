@@ -73,7 +73,6 @@ class CompanyApiTest {
     @Test
     void should_create_employee() throws Exception {
         Company company = getCompany1();
-        Company saveCompany = companyJpaRepository.save(company);
 
         ObjectMapper objectMapper = new ObjectMapper();
         String companyRequest = objectMapper.writeValueAsString(company);
@@ -81,8 +80,8 @@ class CompanyApiTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(companyRequest))
                 .andExpect(MockMvcResultMatchers.status().is(201))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(saveCompany.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(saveCompany.getName()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1L))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(company.getName()));
     }
 
     @Test
@@ -122,37 +121,37 @@ class CompanyApiTest {
     @Test
     void should_find_company_by_id() throws Exception {
         Company company = getCompany1();
-        Company saveCompany = companyJpaRepository.save(company);
+        Company savedCompany = companyJpaRepository.save(company);
         Employee employee = getEmployee(company);
-        Employee saveEmployee = employeeJpaRepository.save(employee);
+        Employee savedEmployee = employeeJpaRepository.save(employee);
 
-        mockMvc.perform(get("/companies/{id}", 1))
+        mockMvc.perform(get("/companies/{id}", savedCompany.getId()))
                 .andExpect(MockMvcResultMatchers.status().is(200))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(saveCompany.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(saveCompany.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(savedCompany.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(savedCompany.getName()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.employees.length()").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].id").value(saveEmployee.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].name").value(saveEmployee.getName()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].age").value(saveEmployee.getAge()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].gender").value(saveEmployee.getGender()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].salary").value(saveEmployee.getSalary()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].id").value(savedEmployee.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].name").value(savedEmployee.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].age").value(savedEmployee.getAge()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].gender").value(savedEmployee.getGender()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].salary").value(savedEmployee.getSalary()));
     }
 
     @Test
     void should_find_employees_by_companies() throws Exception {
         Company company = getCompany1();
-        Company saveCompany =  companyJpaRepository.save(company);
+        Company savedCompany = companyJpaRepository.save(company);
         Employee employee = getEmployee(company);
-        Employee saveEmployee = employeeJpaRepository.save(employee);
+        Employee savedEmployee = employeeJpaRepository.save(employee);
 
-        mockMvc.perform(get("/companies/{companyId}/employees", 1L))
+        mockMvc.perform(get("/companies/{companyId}/employees", savedCompany.getId()))
                 .andExpect(MockMvcResultMatchers.status().is(200))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(saveEmployee.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value(saveEmployee.getName()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].age").value(saveEmployee.getAge()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].gender").value(saveEmployee.getGender()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].salary").value(saveEmployee.getSalary()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(savedEmployee.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value(savedEmployee.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].age").value(savedEmployee.getAge()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].gender").value(savedEmployee.getGender()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].salary").value(savedEmployee.getSalary()));
     }
 
     private static Employee getEmployee(Company company) {
